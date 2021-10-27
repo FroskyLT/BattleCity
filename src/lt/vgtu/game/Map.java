@@ -77,11 +77,11 @@ public class Map {
         }
     }
 
-    public boolean checkCollision(Rectangle rectangle) {
+    public boolean checkBulletCollision(Rectangle bulletBounds) {
         for (Block block : allBlocks) {
             Rectangle blockBounds = block.getBounds();
 
-            if (rectangle.intersects(blockBounds) && block.isVisible()) {
+            if (bulletBounds.intersects(blockBounds) && block.isVisible()) {
                 if (block.getType() == BlockType.BRICK) {
                     block.setVisible(false);
                 }
@@ -92,4 +92,17 @@ public class Map {
 
         return false;
     }
+
+    public boolean checkTankCollision(Rectangle tankBounds) {
+        for (Block block : allBlocks) {
+            Rectangle blockBounds = block.getBounds();
+
+            if (tankBounds.intersects(blockBounds) && block.isVisible()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
 }

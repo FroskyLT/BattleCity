@@ -43,18 +43,18 @@ public class Tank {
         this.direction = Direction.up;
     }
 
-    public void playerCommand(KeyEvent e) {
+    public void playerCommand(KeyEvent e, Map map) {
 
         if (e.getKeyCode() == shoot) {
             if (!isShooting) {
                 if (direction == Direction.up) {
-                    bullet = new Bullet(x + 20, y, bulletColor, direction);
+                    bullet = new Bullet(x + width / 2 - 5, y, bulletColor, direction);
                 } else if (direction == Direction.down) {
-                    bullet = new Bullet(x + 20, y + 40, bulletColor, direction);
+                    bullet = new Bullet(x + width / 2 - 5, y + height / 2 + 5, bulletColor, direction);
                 } else if (direction == Direction.right) {
-                    bullet = new Bullet(x + 40, y + 20, bulletColor, direction);
+                    bullet = new Bullet(x + height / 2 + 5, y + width / 2 - 5, bulletColor, direction);
                 } else if (direction == Direction.left) {
-                    bullet = new Bullet(x, y + 20, bulletColor, direction);
+                    bullet = new Bullet(x, y  + width / 2 - 5, bulletColor, direction);
                 }
 
                 isShooting = true;
@@ -63,27 +63,30 @@ public class Tank {
 
         if (e.getKeyCode() == up) {
             direction = Direction.up;
-
-            if (!(y < 10)) y -= 10;
+            Rectangle tankBounds = new Rectangle(x, y - 10, width, height);
+            if (!map.checkTankCollision(tankBounds)) y -= 10;
 
         }
 
         if (e.getKeyCode() == left) {
             direction = Direction.left;
+            Rectangle tankBounds = new Rectangle(x - 10, y, width, height);
 
-            if (!(x < 10)) x -= 10;
+            if (!map.checkTankCollision(tankBounds)) x -= 10;
         }
 
         if (e.getKeyCode() == down) {
             direction = Direction.down;
+            Rectangle tankBounds = new Rectangle(x, y + 10, width, height);
 
-            if (!(y > 540)) y += 10;
+            if (!map.checkTankCollision(tankBounds)) y += 10;
         }
 
         if (e.getKeyCode() == right) {
             direction = Direction.right;
+            Rectangle tankBounds = new Rectangle(x + 10, y, width, height);
 
-            if (!(x > 590)) x += 10;
+            if (!map.checkTankCollision(tankBounds)) x += 10;
         }
     }
 

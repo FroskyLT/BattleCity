@@ -15,9 +15,6 @@ public class Game extends JPanel implements ActionListener, KeyListener {
     private final Timer timer;
     private final int delay = 10;
 
-    private Tank tank1;
-    private Tank tank2;
-
     private ArrayList<Tank> tanks;
 
     private boolean gameOver;
@@ -26,10 +23,10 @@ public class Game extends JPanel implements ActionListener, KeyListener {
     public Game() {
         map = new Map();
         tanks = new ArrayList<>();
-        tank1 = new Tank(
+        Tank tank1 = new Tank(
                 "Player 1",
-                200,
-                550,
+                180,
+                540,
                 KeyEvent.VK_W,
                 KeyEvent.VK_S,
                 KeyEvent.VK_A,
@@ -37,27 +34,27 @@ public class Game extends JPanel implements ActionListener, KeyListener {
                 KeyEvent.VK_SPACE,
                 Color.yellow,
                 new ArrayList<>(Arrays.asList(
-                        "player1_tank_left.png",
-                        "player1_tank_up.png",
-                        "player1_tank_down.png",
-                        "player1_tank_right.png"
+                        "player_tank_left.png",
+                        "player_tank_up.png",
+                        "player_tank_down.png",
+                        "player_tank_right.png"
                 ))
         );
-        tank2 = new Tank(
+        Tank tank2 = new Tank(
                 "Player 2",
-                400,
-                550,
+                430,
+                540,
                 KeyEvent.VK_UP,
                 KeyEvent.VK_DOWN,
                 KeyEvent.VK_LEFT,
                 KeyEvent.VK_RIGHT,
                 KeyEvent.VK_ENTER,
-                Color.red,
+                Color.lightGray,
                 new ArrayList<>(Arrays.asList(
-                        "player2_tank_left.png",
-                        "player2_tank_up.png",
-                        "player2_tank_down.png",
-                        "player2_tank_right.png"
+                        "tank_basic_left.png",
+                        "tank_basic_up.png",
+                        "tank_basic_down.png",
+                        "tank_basic_right.png"
                 ))
         );
         tanks.add(tank1);
@@ -90,37 +87,17 @@ public class Game extends JPanel implements ActionListener, KeyListener {
                     bullet.move();
                     bullet.paint(g);
 
-                    if (bullet.getBounds().intersects(enemyTank.getBounds())) { // ???
+                    if (bullet.getBounds().intersects(enemyTank.getBounds())) {
                         currTank.setBullet(null);
                         currTank.setShooting(false);
                         winner = currTank.getName() + " won";
                         gameOver = true;
-                    } else if (map.checkCollision(bullet.getBounds())) {
+                    } else if (map.checkBulletCollision(bullet.getBounds())) {
                         currTank.setBullet(null);
                         currTank.setShooting(false);
                     }
                 }
             }
-//            for (Tank tank : tanks) {
-//                tank.paint(this, g);
-//
-//                if (tank.isShooting()) {
-//                    Bullet bullet = tank.getBullet();
-//
-//                    bullet.move();
-//                    bullet.paint(g);
-//
-//                    if (bullet.getBounds().intersects(tank.getBounds())) { // ???
-//                        tank.setBullet(null);
-//                        tank.setShooting(false);
-//                        winner = tank.getName() + " won";
-//                        gameOver = true;
-//                    } else if (map.checkCollision(bullet.getBounds())) {
-//                        tank.setBullet(null);
-//                        tank.setShooting(false);
-//                    }
-//                }
-//            }
         } else {
             g.setColor(Color.white);
             g.setFont(new Font("arial", Font.BOLD, 60));
@@ -148,16 +125,17 @@ public class Game extends JPanel implements ActionListener, KeyListener {
 
     @Override
     public void keyPressed(KeyEvent e) {
-        tank1.playerCommand(e);
-        tank2.playerCommand(e);
+        for(Tank tank: tanks) {
+            tank.playerCommand(e, map);
+        }
 
         if (e.getKeyCode() == KeyEvent.VK_SPACE && gameOver) {
             map = new Map();
             tanks = new ArrayList<>();
-            tank1 = new Tank(
+            Tank tank1 = new Tank(
                     "Player 1",
-                    200,
-                    550,
+                    180,
+                    540,
                     KeyEvent.VK_W,
                     KeyEvent.VK_S,
                     KeyEvent.VK_A,
@@ -165,27 +143,27 @@ public class Game extends JPanel implements ActionListener, KeyListener {
                     KeyEvent.VK_SPACE,
                     Color.yellow,
                     new ArrayList<>(Arrays.asList(
-                            "player1_tank_left.png",
-                            "player1_tank_up.png",
-                            "player1_tank_down.png",
-                            "player1_tank_right.png"
+                            "player_tank_left.png",
+                            "player_tank_up.png",
+                            "player_tank_down.png",
+                            "player_tank_right.png"
                     ))
             );
-            tank2 = new Tank(
+            Tank tank2 = new Tank(
                     "Player 2",
-                    400,
-                    550,
+                    430,
+                    540,
                     KeyEvent.VK_UP,
                     KeyEvent.VK_DOWN,
                     KeyEvent.VK_LEFT,
                     KeyEvent.VK_RIGHT,
                     KeyEvent.VK_ENTER,
-                    Color.red,
+                    Color.lightGray,
                     new ArrayList<>(Arrays.asList(
-                            "player2_tank_left.png",
-                            "player2_tank_up.png",
-                            "player2_tank_down.png",
-                            "player2_tank_right.png"
+                            "tank_basic_left.png",
+                            "tank_basic_up.png",
+                            "tank_basic_down.png",
+                            "tank_basic_right.png"
                     ))
             );
             tanks.add(tank1);
