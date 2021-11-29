@@ -5,8 +5,8 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.ArrayList;
 
-public class Tank {
-    private String name;
+public class Tank extends Sprite {
+    private final String playerName;
     private int x;
     private int y;
 
@@ -17,9 +17,6 @@ public class Tank {
     private final int shoot;
 
     private Direction direction;
-    private Image image;
-    private int height;
-    private int width;
 
     private final ArrayList<String> imageNames;
 
@@ -29,7 +26,8 @@ public class Tank {
     private boolean isShooting;
 
     public Tank(String name, int x, int y, int up, int down, int left, int right, int shoot, Color bulletColor, ArrayList<String> imageNames) {
-        this.name = name;
+        super(x, y);
+        this.playerName = name;
         this.x = x;
         this.y = y;
         this.up = up;
@@ -43,114 +41,104 @@ public class Tank {
         this.direction = Direction.up;
     }
 
-    public void playerCommand(KeyEvent e, Map map) {
+    private boolean isMoveControl(int control) {
+        return control == up || control == right || control == down || control == left;
+    }
 
-        if (e.getKeyCode() == shoot) {
-            if (!isShooting) {
-                if (direction == Direction.up) {
-                    bullet = new Bullet(x + width / 2 - 5, y, bulletColor, direction);
-                } else if (direction == Direction.down) {
-                    bullet = new Bullet(x + width / 2 - 5, y + height / 2 + 5, bulletColor, direction);
-                } else if (direction == Direction.right) {
-                    bullet = new Bullet(x + height / 2 + 5, y + width / 2 - 5, bulletColor, direction);
-                } else if (direction == Direction.left) {
-                    bullet = new Bullet(x, y  + width / 2 - 5, bulletColor, direction);
-                }
+    public void startShooting() {
+        int stabilizedX = x + getWidth() / 2 - 5;
+        int stabilizedY = y + getWidth() / 2 - 5;
 
-                isShooting = true;
-            }
+        switch (direction) {
+            case up -> bullet = new Bullet(stabilizedX, y, bulletColor, direction);
+            case down, right -> bullet = new Bullet(stabilizedX, stabilizedY, bulletColor, direction);
+            case left -> bullet = new Bullet(x, stabilizedY, bulletColor, direction);
         }
 
-        if (e.getKeyCode() == up) {
+        isShooting = true;
+    }
+
+    public void move(int control, Map map) {
+        if (control == up) {
             direction = Direction.up;
-            Rectangle tankBounds = new Rectangle(x, y - 10, width, height);
+            Rectangle tankBounds = new Rectangle(x, y - 10, getWidth(), getHeight());
             if (!map.checkTankCollision(tankBounds)) y -= 10;
 
-        }
-
-        if (e.getKeyCode() == left) {
+        } else if (control == left) {
             direction = Direction.left;
-            Rectangle tankBounds = new Rectangle(x - 10, y, width, height);
+            Rectangle tankBounds = new Rectangle(x - 10, y, getWidth(), getHeight());
 
             if (!map.checkTankCollision(tankBounds)) x -= 10;
-        }
-
-        if (e.getKeyCode() == down) {
+        } else if (control == down) {
             direction = Direction.down;
-            Rectangle tankBounds = new Rectangle(x, y + 10, width, height);
+            Rectangle tankBounds = new Rectangle(x, y + 10, getWidth(), getHeight());
 
             if (!map.checkTankCollision(tankBounds)) y += 10;
-        }
-
-        if (e.getKeyCode() == right) {
+        } else if (control == right) {
             direction = Direction.right;
-            Rectangle tankBounds = new Rectangle(x + 10, y, width, height);
+            Rectangle tankBounds = new Rectangle(x + 10, y, getWidth(), getHeight());
 
             if (!map.checkTankCollision(tankBounds)) x += 10;
         }
     }
 
+    public void processPlayerCommand(KeyEvent e, Map map) {
+
+        if (e.getKeyCode() == shoot && !isShooting) {
+            this.startShooting();
+        }
+
+        if (isMoveControl(e.getKeyCode())) {
+            move(e.getKeyCode(), map);
+        }
+    }
+
     public void paint(Component c, Graphics g) {
-        ImageIcon i;
         switch (direction) {
             case left -> {
-                i = new ImageIcon(imageNames.get(0));
-                image = i.getImage();
-                width = image.getWidth(null);
-                height = image.getHeight(null);
+                loadImage(imageNames.get(0));
+                getImageDimensions();
             }
             case up -> {
-                i = new ImageIcon(imageNames.get(1));
-                image = i.getImage();
-                width = image.getWidth(null);
-                height = image.getHeight(null);
+                loadImage(imageNames.get(1));
+                getImageDimensions();
             }
             case down -> {
-                i = new ImageIcon(imageNames.get(2));
-                image = i.getImage();
-                width = image.getWidth(null);
-                height = image.getHeight(null);
+                loadImage(imageNames.get(2));
+                getImageDimensions();
             }
             case right -> {
-                i = new ImageIcon(imageNames.get(3));
-                image = i.getImage();
-                width = image.getWidth(null);
-                height = image.getHeight(null);
+                loadImage(imageNames.get(3));
+                getImageDimensions();
             }
         }
 
-        g.drawImage(image, x, y, c);
+        g.drawImage(getImage(), x, y, c);
     }
 
-    public String getName() {
-        return name;
+    public void disposeBullet() {
+        this.bullet = null;
+        this.isShooting = false;
     }
 
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
+    public String getPlayerName() {
+        return playerName;
     }
 
     public boolean isShooting() {
         return isShooting;
     }
 
-    public void setShooting(boolean shooting) {
-        isShooting = shooting;
-    }
-
     public Bullet getBullet() {
         return bullet;
     }
 
-    public Rectangle getBounds() {
-        return new Rectangle(x, y, width, height);
+    public Direction getDirection() {
+        return direction;
     }
 
-    public void setBullet(Bullet bullet) {
-        this.bullet = bullet;
+    @Override
+    public Rectangle getBounds() {
+        return new Rectangle(x, y, getWidth(), getHeight());
     }
 }

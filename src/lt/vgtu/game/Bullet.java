@@ -9,6 +9,11 @@ public class Bullet {
     private Color bulletColor;
     private Direction direction;
 
+    public Bullet(int x, int y) {
+        this.x = x;
+        this.y = y;
+    }
+
     public Bullet(int x, int y, Color bulletColor, Direction direction) {
         this.x = x;
         this.y = y;
