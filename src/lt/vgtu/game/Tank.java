@@ -9,6 +9,8 @@ public class Tank extends Sprite {
     private final String playerName;
     private int x;
     private int y;
+    private int previousX;
+    private int previousY;
 
     private final int up;
     private final int down;
@@ -50,9 +52,9 @@ public class Tank extends Sprite {
         int stabilizedY = y + getWidth() / 2 - 5;
 
         switch (direction) {
-            case up -> bullet = new Bullet(stabilizedX, y, bulletColor, direction);
-            case down, right -> bullet = new Bullet(stabilizedX, stabilizedY, bulletColor, direction);
-            case left -> bullet = new Bullet(x, stabilizedY, bulletColor, direction);
+            case up -> bullet = new Bullet.BulletBuilder(stabilizedX, y).bulletColor(bulletColor).direction(direction).build();
+            case down, right -> bullet = new Bullet.BulletBuilder(stabilizedX, stabilizedY).bulletColor(bulletColor).direction(direction).build();
+            case left -> bullet = new Bullet.BulletBuilder(x, stabilizedY).bulletColor(bulletColor).direction(direction).build();
         }
 
         isShooting = true;
@@ -62,23 +64,28 @@ public class Tank extends Sprite {
         if (control == up) {
             direction = Direction.up;
             Rectangle tankBounds = new Rectangle(x, y - 10, getWidth(), getHeight());
-            if (!map.checkTankCollision(tankBounds)) y -= 10;
+
+            this.setY(y - 10);
+            if (map.checkTankCollision(tankBounds)) this.restoreY();
 
         } else if (control == left) {
             direction = Direction.left;
             Rectangle tankBounds = new Rectangle(x - 10, y, getWidth(), getHeight());
 
-            if (!map.checkTankCollision(tankBounds)) x -= 10;
+            this.setX(x - 10);
+            if (map.checkTankCollision(tankBounds)) this.restoreX();
         } else if (control == down) {
             direction = Direction.down;
             Rectangle tankBounds = new Rectangle(x, y + 10, getWidth(), getHeight());
 
-            if (!map.checkTankCollision(tankBounds)) y += 10;
+            this.setY(y + 10);
+            if (map.checkTankCollision(tankBounds)) this.restoreY();
         } else if (control == right) {
             direction = Direction.right;
             Rectangle tankBounds = new Rectangle(x + 10, y, getWidth(), getHeight());
 
-            if (!map.checkTankCollision(tankBounds)) x += 10;
+            this.setX(x + 10);
+            if (map.checkTankCollision(tankBounds)) this.restoreX();
         }
     }
 
@@ -119,6 +126,24 @@ public class Tank extends Sprite {
     public void disposeBullet() {
         this.bullet = null;
         this.isShooting = false;
+    }
+
+    public void setX(int x) {
+        this.previousX = this.x;
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.previousY = this.y;
+        this.y = y;
+    }
+
+    public void restoreX() {
+            this.x = this.previousX;
+    }
+
+    public void restoreY() {
+            this.y = this.previousY;
     }
 
     public String getPlayerName() {

@@ -105,4 +105,7 @@ public class Map {
         return false;
     }
 
+    public ArrayList<Block> getAllBlocks() {
+        return allBlocks;
+    }
 }

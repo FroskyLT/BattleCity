@@ -12,7 +12,7 @@ public class UnitTests {
 
     @Test
     public void testBulletCollisionCheck() {
-        Bullet bullet = new Bullet(10 , 10);
+        Bullet bullet = new Bullet.BulletBuilder(10 , 10).build();
         Block block = new Block(1, 1, "wall_brick.png", BlockType.BRICK);
         Block block2 = new Block(30, 30, "wall_brick.png", BlockType.BRICK);
 

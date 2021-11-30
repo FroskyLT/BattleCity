@@ -9,17 +9,39 @@ public class Bullet {
     private Color bulletColor;
     private Direction direction;
 
-    public Bullet(int x, int y) {
-        this.x = x;
-        this.y = y;
+    private Bullet(BulletBuilder builder) {
+        this.x = builder.x;
+        this.y = builder.y;
+        this.bulletColor = builder.bulletColor;
+        this.direction = builder.direction;
     }
 
-    public Bullet(int x, int y, Color bulletColor, Direction direction) {
-        this.x = x;
-        this.y = y;
+    public static class BulletBuilder {
+        private final int x;
+        private final int y;
 
-        this.bulletColor = bulletColor;
-        this.direction = direction;
+        private Color bulletColor;
+        private Direction direction;
+
+        public BulletBuilder(int x, int y) {
+            this.x = x;
+            this.y = y;
+        }
+
+        public BulletBuilder bulletColor(Color bulletColor) {
+            this.bulletColor = bulletColor;
+            return this;
+        }
+
+        public BulletBuilder direction(Direction direction) {
+            this.direction = direction;
+            return this;
+        }
+
+        public Bullet build() {
+            return new Bullet(this);
+        }
+
     }
 
     public void move() {
