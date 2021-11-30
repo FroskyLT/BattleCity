@@ -6,8 +6,8 @@ public class Bullet {
     private int x;
     private int y;
 
-    private Color bulletColor;
-    private Direction direction;
+    private final Color bulletColor;
+    private final Direction direction;
 
     private Bullet(BulletBuilder builder) {
         this.x = builder.x;
@@ -62,13 +62,5 @@ public class Bullet {
 
     public Rectangle getBounds() {
         return new Rectangle(x, y, 10, 10);
-    }
-
-    public int getX() {
-        return x;
-    }
-
-    public int getY() {
-        return y;
     }
 }
