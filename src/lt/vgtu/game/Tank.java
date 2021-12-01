@@ -59,43 +59,43 @@ public class Tank extends Sprite {
         isShooting = true;
     }
 
-    public void move(int control, Map map) {
+    public void move(int control, GameRules gameRules) {
         if (control == up) {
             direction = Direction.up;
             Rectangle tankBounds = new Rectangle(x, y - 10, getWidth(), getHeight());
 
             this.setY(y - 10);
-            if (map.checkTankCollision(tankBounds)) this.restoreY();
+            if (gameRules.checkTankCollision(tankBounds)) this.restoreY();
 
         } else if (control == left) {
             direction = Direction.left;
             Rectangle tankBounds = new Rectangle(x - 10, y, getWidth(), getHeight());
 
             this.setX(x - 10);
-            if (map.checkTankCollision(tankBounds)) this.restoreX();
+            if (gameRules.checkTankCollision(tankBounds)) this.restoreX();
         } else if (control == down) {
             direction = Direction.down;
             Rectangle tankBounds = new Rectangle(x, y + 10, getWidth(), getHeight());
 
             this.setY(y + 10);
-            if (map.checkTankCollision(tankBounds)) this.restoreY();
+            if (gameRules.checkTankCollision(tankBounds)) this.restoreY();
         } else if (control == right) {
             direction = Direction.right;
             Rectangle tankBounds = new Rectangle(x + 10, y, getWidth(), getHeight());
 
             this.setX(x + 10);
-            if (map.checkTankCollision(tankBounds)) this.restoreX();
+            if (gameRules.checkTankCollision(tankBounds)) this.restoreX();
         }
     }
 
-    public void processPlayerCommand(KeyEvent e, Map map) {
+    public void processPlayerCommand(KeyEvent e, GameRules gameRules) {
 
         if (e.getKeyCode() == shoot && !isShooting) {
             this.startShooting();
         }
 
         if (isMoveControl(e.getKeyCode())) {
-            move(e.getKeyCode(), map);
+            this.move(e.getKeyCode(), gameRules);
         }
     }
 
@@ -127,21 +127,21 @@ public class Tank extends Sprite {
         this.isShooting = false;
     }
 
-    public void setX(int x) {
+    private void setX(int x) {
         this.previousX = this.x;
         this.x = x;
     }
 
-    public void setY(int y) {
+    private void setY(int y) {
         this.previousY = this.y;
         this.y = y;
     }
 
-    public void restoreX() {
+    private void restoreX() {
             this.x = this.previousX;
     }
 
-    public void restoreY() {
+    private void restoreY() {
             this.y = this.previousY;
     }
 

@@ -55,17 +55,21 @@ public class Map {
         };
         for (int i = 0; i < map.length; i++) {
             for (int j = 0; j < map[i].length; j++) {
-                if (map[i][j] == 1) {
-                    Block block = new Block(j, i, "wall_brick.png", BlockType.BRICK);
-                    allBlocks.add(block);
-                } else if (map[i][j] == 2) {
-                    Block block = new Block(j, i, "wall_steel.png", BlockType.STEEL);
-                    allBlocks.add(block);
-                } else if (map[i][j] == 3) {
-                    Block block = new Block(j, i, "edge.png", BlockType.EDGE);
-                    allBlocks.add(block);
-                }
+                addBlock(map[i][j], j, i);
             }
+        }
+    }
+
+    private void addBlock(int cell, int x, int y) {
+        if (cell == 1) {
+            Block block = new Block(x, y, "wall_brick.png", BlockType.BRICK);
+            allBlocks.add(block);
+        } else if (cell == 2) {
+            Block block = new Block(x, y, "wall_steel.png", BlockType.STEEL);
+            allBlocks.add(block);
+        } else if (cell == 3) {
+            Block block = new Block(x, y, "edge.png", BlockType.EDGE);
+            allBlocks.add(block);
         }
     }
 
@@ -75,34 +79,6 @@ public class Map {
                 g.drawImage(block.getImage(), block.getX(), block.getY(), c);
             }
         }
-    }
-
-    public boolean checkBulletCollision(Rectangle bulletBounds) {
-        for (Block block : allBlocks) {
-            Rectangle blockBounds = block.getBounds();
-
-            if (bulletBounds.intersects(blockBounds) && block.isVisible()) {
-                if (block.getType() == BlockType.BRICK) {
-                    block.setVisible(false);
-                }
-
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean checkTankCollision(Rectangle tankBounds) {
-        for (Block block : allBlocks) {
-            Rectangle blockBounds = block.getBounds();
-
-            if (tankBounds.intersects(blockBounds) && block.isVisible()) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public ArrayList<Block> getAllBlocks() {

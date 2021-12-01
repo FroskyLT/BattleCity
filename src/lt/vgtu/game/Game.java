@@ -11,14 +11,10 @@ import java.util.Arrays;
 
 public class Game extends JPanel implements ActionListener, KeyListener {
     private final Timer timer;
-    private final int delay = 10;
 
     private Map map;
     private ArrayList<Tank> tanks;
     private GameRules gameRules;
-
-    private boolean gameOver;
-    private String winner;
 
     public Game() {
         map = new Map();
@@ -65,10 +61,9 @@ public class Game extends JPanel implements ActionListener, KeyListener {
         setFocusable(true);
         setFocusTraversalKeysEnabled(false);
 
+        int delay = 10;
         timer = new Timer(delay, this);
         timer.start();
-
-        gameOver = false;
     }
 
     public void paint(Graphics g) {
@@ -79,32 +74,23 @@ public class Game extends JPanel implements ActionListener, KeyListener {
         for (Tank tank: tanks)
             tank.paint(this, g);
 
-        if (!gameOver) {
-            for (int i = 0; i < tanks.size(); i++) {
-                Tank currTank = tanks.get(i);
-                Tank enemyTank = i == 0 ? tanks.get(1) : tanks.get(0);
-
-                if (currTank.isShooting()) {
-                    Bullet bullet = currTank.getBullet();
+        if (!gameRules.isGameOver()) {
+            tanks.forEach(tank -> {
+                if (tank.isShooting()) {
+                    Bullet bullet = tank.getBullet();
 
                     bullet.move();
                     bullet.paint(g);
 
-                    if (bullet.getBounds().intersects(enemyTank.getBounds())) {
-                        currTank.disposeBullet();
-
-                        winner = currTank.getPlayerName() + " won";
-                        gameOver = true;
-                    } else if (map.checkBulletCollision(bullet.getBounds())) {
-                        currTank.disposeBullet();
-                    }
+                    gameRules.processBulletCollision(tank);
                 }
-            }
+            });
+
         } else {
             g.setColor(Color.white);
             g.setFont(new Font("arial", Font.BOLD, 60));
             g.drawString("Game Over", 160, 270);
-            g.drawString(winner, 140, 350);
+            g.drawString(gameRules.getWinner(), 140, 350);
             g.setColor(Color.white);
             g.setFont(new Font("arial", Font.BOLD, 30));
             g.drawString("(Space to Restart)", 190, 400);
@@ -128,10 +114,10 @@ public class Game extends JPanel implements ActionListener, KeyListener {
     @Override
     public void keyPressed(KeyEvent e) {
         for(Tank tank: tanks) {
-            tank.processPlayerCommand(e, map);
+            tank.processPlayerCommand(e, gameRules);
         }
 
-        if (e.getKeyCode() == KeyEvent.VK_SPACE && gameOver) {
+        if (e.getKeyCode() == KeyEvent.VK_SPACE && gameRules.isGameOver()) {
             map = new Map();
             tanks = new ArrayList<>();
             Tank tank1 = new Tank(
@@ -171,7 +157,8 @@ public class Game extends JPanel implements ActionListener, KeyListener {
             tanks.add(tank1);
             tanks.add(tank2);
 
-            gameOver = false;
+            gameRules = new GameRules(tanks, map);
+
             repaint();
         }
     }

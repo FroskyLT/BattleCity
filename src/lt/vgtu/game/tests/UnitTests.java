@@ -5,6 +5,7 @@ import org.junit.Test;
 
 import java.awt.*;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
 
 import static org.junit.Assert.*;
 
@@ -37,11 +38,15 @@ public class UnitTests {
                 null,
                 null
         );
+        ArrayList<Tank> tanks = new ArrayList<>();
+        tanks.add(tank);
+
         Map map = new Map();
+        GameRules gameRules = new GameRules(tanks, map);
 
         assertSame(Direction.up, tank.getDirection());
 
-        tank.move(KeyEvent.VK_S, map);
+        tank.move(KeyEvent.VK_S, gameRules);
 
         assertSame(Direction.down, tank.getDirection());
     }
